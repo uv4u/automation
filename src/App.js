@@ -56,10 +56,10 @@ const App = () => {
         <div className="col-lg-2" style={{ borderRight: "1px solid #EEEEEE" }}>
           <TemporaryDrawer />
         </div>
-        <div>
+        <div className="col-lg-10">
           {/* right */}
           <Tests />
-          <Form onSubmit={handleSubmit}>
+          {/* <Form onSubmit={handleSubmit}>
             <Form.Group controlId="websiteIp">
               <Form.Label>Website IP</Form.Label>
               <Form.Control type="text" placeholder="Enter Website IP" />
@@ -100,7 +100,7 @@ const App = () => {
                 Submit
               </Button>
             </>
-          </Form>
+          </Form> */}
         </div>
       </div>
     </div>
