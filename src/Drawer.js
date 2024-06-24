@@ -11,7 +11,17 @@ import AddAlertIcon from "@mui/icons-material/AddAlert";
 const SideNav = () => {
   return (
     <div>
-      <List sx={{ ".css-10hburv-MuiTypography-root": { fontSize: "0.8rem" } }}>
+      <h3 style={{ marginLeft: 10 }}>Project1</h3>
+      <List
+        sx={{
+          ".css-10hburv-MuiTypography-root": {
+            fontSize: "0.8rem",
+            fontWeight: 700,
+
+            color: "grey",
+          },
+        }}
+      >
         <ListItemButton>
           <CodeIcon />
           <ListItemText alignitems="center" primary={"Tests"} />

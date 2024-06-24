@@ -12,6 +12,7 @@ import Tests from "./sidetabs/Tests";
 
 //MUI
 import AppBar from "@mui/material/AppBar";
+import SideNav from "./Drawer";
 
 const App = () => {
   const [mobileNumber, setMobileNumber] = useState("");
@@ -42,7 +43,7 @@ const App = () => {
   };
 
   return (
-    <div style={{ marginTop: 100 }}>
+    <div style={{ marginTop: 60 }}>
       <AppBar
         position="fixed"
         sx={{
@@ -54,7 +55,7 @@ const App = () => {
       </AppBar>
       <div className="d-flex">
         <div className="col-lg-2" style={{ borderRight: "1px solid #EEEEEE" }}>
-          <TemporaryDrawer />
+          <SideNav />
         </div>
         <div className="col-lg-10">
           {/* right */}

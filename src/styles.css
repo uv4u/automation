@@ -1,3 +1,29 @@
 body{
     font-size: 0.9rem;
 }
+
+.custom{
+    width: 999;
+
+     font-weight: 700 ;
+}
+
+.check{
+    font-weight: 600 ;
+    width: 1%;
+}
+
+.name{
+    font-weight: 600 ;
+    width: 60%;
+}
+
+.last-result{
+    font-weight: 600 ;
+    width: 20%;
+}
+
+.action{
+    font-weight: 600 ;
+    width: 10%;
+}

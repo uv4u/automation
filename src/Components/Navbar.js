@@ -35,25 +35,21 @@ const Navbar = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  Dropdown
+                  Project1
                 </a>
                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                   <li>
                     <a className="dropdown-item" href="#">
-                      Action
+                      Project1
                     </a>
                   </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Another action
-                    </a>
-                  </li>
+
                   <li>
                     <hr className="dropdown-divider" />
                   </li>
                   <li>
                     <a className="dropdown-item" href="#">
-                      Something else here
+                      <button>ADD</button>
                     </a>
                   </li>
                 </ul>
