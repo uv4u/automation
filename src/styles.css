@@ -27,3 +27,15 @@ body{
     font-weight: 600 ;
     width: 10%;
 }
+
+.grid-item {
+    transition: width 0.5s; /* add transition effect to width property */
+  }
+  
+  .col-lg-1 {
+    width: 8.33%; /* adjust width according to Bootstrap's grid system */
+  }
+  
+  .col-lg-2 {
+    width: 16.67%; /* adjust width according to Bootstrap's grid system */
+  }

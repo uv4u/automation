@@ -7,11 +7,14 @@ import ReorderIcon from "@mui/icons-material/Reorder";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import HistoryIcon from "@mui/icons-material/History";
 import AddAlertIcon from "@mui/icons-material/AddAlert";
+import { Tooltip } from "@mui/material";
 
-const SideNav = () => {
+import Alerts from "./sidetabs/Alerts";
+
+const SideNav = (props) => {
   return (
     <div>
-      <h3 style={{ marginLeft: 10 }}>Project1</h3>
+      {props.show && <h3 style={{ marginLeft: 10 }}>Project1</h3>}
       <List
         sx={{
           ".css-10hburv-MuiTypography-root": {
@@ -23,24 +26,36 @@ const SideNav = () => {
         }}
       >
         <ListItemButton>
-          <CodeIcon />
-          <ListItemText alignitems="center" primary={"Tests"} />
+          <Tooltip title="Tests">
+            <CodeIcon />
+          </Tooltip>
+          {props.show && <ListItemText alignitems="center" primary={"Tests"} />}
         </ListItemButton>
         <ListItemButton>
-          <ReorderIcon />
-          <ListItemText primary={"Suites"} />
+          <Tooltip title="Suites">
+            <ReorderIcon />
+          </Tooltip>
+          {props.show && <ListItemText primary={"Suites"} />}
         </ListItemButton>
         <ListItemButton>
-          <ManageSearchIcon />
-          <ListItemText primary={"Run history"} />
+          <Tooltip title="Run history">
+            <ManageSearchIcon />
+          </Tooltip>
+          {props.show && <ListItemText primary={"Run history"} />}
         </ListItemButton>
         <ListItemButton>
-          <HistoryIcon />
-          <ListItemText primary={"Schedules"} />
+          <Tooltip title="Schedules">
+            <HistoryIcon />
+          </Tooltip>
+          {props.show && <ListItemText primary={"Schedules"} />}
         </ListItemButton>
-        <ListItemButton>
-          <AddAlertIcon />
-          <ListItemText primary={"Alerts"} />
+        <ListItemButton
+        // onClick={<Alerts />}
+        >
+          <Tooltip title="Alerts">
+            <AddAlertIcon />
+          </Tooltip>
+          {props.show && <ListItemText primary={"Alerts"} />}
         </ListItemButton>
       </List>
     </div>

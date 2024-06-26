@@ -7,6 +7,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import "../styles.css";
 import { useState, useEffect } from "react";
 import BasicModal from "../Components/BasicModal";
+import Tooltip from "@mui/material/Tooltip";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -48,22 +49,40 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const dummyTest = [
-  ["LoginCheck", "igdf", ""],
-  ["ProfilePicCheck", "", ""],
-  ["EventCreation", "", ""],
-];
-
 const Tests = () => {
   const [testc, setTestc] = useState([]);
+  const [search, setSearch] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  const [toggle, setToggle] = useState(true);
+
+  const handleSearch = (e) => {
+    const searchText = e.target.value.toLowerCase();
+    setSearch(searchText);
+    const filteredResults = testc.filter((item) =>
+      item.toLowerCase().includes(searchText)
+    );
+    setSearchResult(filteredResults);
+  };
+
+  const handleBlur = () => {
+    setSearch("");
+    setSearchResult([]);
+    setToggle(true);
+  };
+
+  const handleFocus = () => {
+    setToggle(false);
+  };
 
   return (
     <div>
       <div
-        className="d-flex justify-content-between"
+        className="d-flex justify-content-between align-items-center"
         style={{ paddingLeft: 10, paddingRight: 10 }}
       >
-        <h4>Tests</h4>
+        <h4>Tests:</h4>
+        <h4 style={{ marginRight: 640 }}>{testc.length}</h4>
+
         <div className="d-flex flex-row-reverse">
           <IconButton>
             <MoreVertIcon />
@@ -74,6 +93,9 @@ const Tests = () => {
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
+              onBlur={handleBlur}
+              onFocus={handleFocus}
+              onChange={handleSearch}
               placeholder="Search"
               inputProps={{ "aria-label": "search" }}
             />
@@ -100,7 +122,8 @@ const Tests = () => {
           ACTION
         </ListItemButton>
       </div>
-      {testc.map((item, index) => (
+      {/* {testc.map((item, index) => ( */}
+      {(toggle ? testc : searchResult).map((item, index) => (
         <div
           className="d-flex justify-content-around"
           style={{
@@ -119,10 +142,14 @@ const Tests = () => {
           <ListItemButton className="last-result">{""}</ListItemButton>
           <span className="action">
             <IconButton>
-              <PlayArrowIcon />
+              <Tooltip title="Run test">
+                <PlayArrowIcon />
+              </Tooltip>
             </IconButton>
             <IconButton>
-              <MoreVertIcon />
+              <Tooltip title="More option">
+                <MoreVertIcon />
+              </Tooltip>
             </IconButton>
           </span>
         </div>

@@ -13,10 +13,28 @@ import Tests from "./sidetabs/Tests";
 //MUI
 import AppBar from "@mui/material/AppBar";
 import SideNav from "./Drawer";
+import { IconButton } from "@mui/material";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 
 const App = () => {
   const [mobileNumber, setMobileNumber] = useState("");
   const [otp, setOtp] = useState("");
+  const [toggle, setToggle] = useState(true);
+  const [short, setShort] = useState("col-lg-2");
+  const [long, setLong] = useState("col-lg-10");
+
+  const chnageShort = () => {
+    if (toggle === true) {
+      setShort("col-lg-1");
+      setLong("col-lg-11");
+      setToggle(false);
+    } else if (toggle === false) {
+      setShort("col-lg-2");
+      setLong("col-lg-10");
+      setToggle(true);
+    }
+  };
 
   const handleGetOtpClick = async (req, res) => {
     try {
@@ -54,12 +72,24 @@ const App = () => {
         <Navbar />
       </AppBar>
       <div className="d-flex">
-        <div className="col-lg-2" style={{ borderRight: "1px solid #EEEEEE" }}>
-          <SideNav />
+        <div
+          className={`${short} grid-item`}
+          style={{ borderRight: `1px solid #EEEEEE` }}
+        >
+          <SideNav show={toggle} />
+          {/* <button onClick={chnageShort}>ABC</button> */}
+          <IconButton onClick={chnageShort}>
+            {toggle ? (
+              <KeyboardDoubleArrowLeftIcon />
+            ) : (
+              <KeyboardDoubleArrowRightIcon />
+            )}
+          </IconButton>
         </div>
-        <div className="col-lg-10">
+        <div className={`${long}`}>
           {/* right */}
           <Tests />
+
           {/* <Form onSubmit={handleSubmit}>
             <Form.Group controlId="websiteIp">
               <Form.Label>Website IP</Form.Label>
