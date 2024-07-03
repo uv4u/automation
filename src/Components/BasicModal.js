@@ -26,9 +26,9 @@ export default function BasicModal(props) {
 
   return (
     <div>
-      <button className="btn btn-primary" onClick={handleOpen}>
+      <Button variant="outlined" onClick={handleOpen}>
         Add Test
-      </button>
+      </Button>
       <Modal
         open={open}
         onClose={handleClose}

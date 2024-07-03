@@ -8,6 +8,7 @@ import "../styles.css";
 import { useState, useEffect } from "react";
 import BasicModal from "../Components/BasicModal";
 import Tooltip from "@mui/material/Tooltip";
+import SideNav from "../Drawer";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -75,85 +76,87 @@ const Tests = () => {
   };
 
   return (
-    <div>
-      <div
-        className="d-flex justify-content-between align-items-center"
-        style={{ paddingLeft: 10, paddingRight: 10 }}
-      >
-        <h4>Tests:</h4>
-        <h4 style={{ marginRight: 640 }}>{testc.length}</h4>
+    <div className="d-flex">
+      <SideNav />
+      {/* <div
+        className="d-flex justify-content-center col-lg-12"
+        style={{ paddingTop: 50 }}
+      > */}
+      <div className="col-lg-10">
+        <div className="d-flex justify-content-between col-lg-12 top-heading">
+          <h4>Tests</h4>
 
-        <div className="d-flex flex-row-reverse">
-          <IconButton>
-            <MoreVertIcon />
-          </IconButton>
-          <BasicModal setState={setTestc} state={testc} />
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              onBlur={handleBlur}
-              onFocus={handleFocus}
-              onChange={handleSearch}
-              placeholder="Search"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>
+          <div className="d-flex flex-row-reverse">
+            <IconButton>
+              <MoreVertIcon />
+            </IconButton>
+            <BasicModal setState={setTestc} state={testc} />
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                onBlur={handleBlur}
+                onFocus={handleFocus}
+                onChange={handleSearch}
+                placeholder="Search"
+                inputProps={{ "aria-label": "search" }}
+              />
+            </Search>
+          </div>
         </div>
-      </div>
-      <div
-        className="d-flex justify-content-around"
-        style={{
-          marginTop: 50,
-          borderBottom: "1px solid rgb(120, 119, 119, .1)",
-        }}
-      >
-        <ListItemButton className="check">
-          <input type="checkbox" />
-        </ListItemButton>
-        <ListItemButton className="name" sx={{ color: "grey" }}>
-          NAME
-        </ListItemButton>
-        <ListItemButton className="last-result" sx={{ color: "grey" }}>
-          LAST RESULT
-        </ListItemButton>
-        <ListItemButton sx={{ color: "grey" }} className="action">
-          ACTION
-        </ListItemButton>
-      </div>
-      {/* {testc.map((item, index) => ( */}
-      {(toggle ? testc : searchResult).map((item, index) => (
         <div
-          className="d-flex justify-content-around"
+          className="d-flex col-lg-12 top-heading"
           style={{
-            marginTop: 20,
-            marginBottom: 20,
             borderBottom: "1px solid rgb(120, 119, 119, .1)",
           }}
         >
           <ListItemButton className="check">
             <input type="checkbox" />
           </ListItemButton>
-          <ListItemButton className="name" key="index">
-            {/* {tc[0]} */}
-            {item}
+          <ListItemButton className="name" sx={{ color: "grey" }}>
+            NAME
           </ListItemButton>
-          <ListItemButton className="last-result">{""}</ListItemButton>
-          <span className="action">
-            <IconButton>
-              <Tooltip title="Run test">
-                <PlayArrowIcon />
-              </Tooltip>
-            </IconButton>
-            <IconButton>
-              <Tooltip title="More option">
-                <MoreVertIcon />
-              </Tooltip>
-            </IconButton>
-          </span>
+          <ListItemButton className="last-result" sx={{ color: "grey" }}>
+            LAST RESULT
+          </ListItemButton>
+          <ListItemButton sx={{ color: "grey" }} className="action">
+            ACTION
+          </ListItemButton>
         </div>
-      ))}
+        {/* {testc.map((item, index) => ( */}
+        {(toggle ? testc : searchResult).map((item, index) => (
+          <div
+            className="d-flex justify-content-around"
+            style={{
+              marginTop: 20,
+              marginBottom: 20,
+              borderBottom: "1px solid rgb(120, 119, 119, .1)",
+            }}
+          >
+            <ListItemButton className="check">
+              <input type="checkbox" />
+            </ListItemButton>
+            <ListItemButton className="name" key="index">
+              {/* {tc[0]} */}
+              {item}
+            </ListItemButton>
+            <ListItemButton className="last-result">{""}</ListItemButton>
+            <span className="action">
+              <IconButton>
+                <Tooltip title="Run test">
+                  <PlayArrowIcon />
+                </Tooltip>
+              </IconButton>
+              <IconButton>
+                <Tooltip title="More option">
+                  <MoreVertIcon />
+                </Tooltip>
+              </IconButton>
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

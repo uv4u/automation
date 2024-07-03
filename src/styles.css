@@ -39,3 +39,23 @@ body{
   .col-lg-2 {
     width: 16.67%; /* adjust width according to Bootstrap's grid system */
   }
+
+  .link{
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .alert{
+    border: 1px solid black;
+  }
+
+  .alert:hover{
+    border: 1px solid green;
+  }
+
+  .top-heading{
+      margin-top:50px;
+      padding-left: 40px;
+      padding-right: 40px;
+  }
+
