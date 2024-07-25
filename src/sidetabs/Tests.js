@@ -5,10 +5,13 @@ import { IconButton, ListItemButton } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import "../styles.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import BasicModal from "../Components/BasicModal";
 import Tooltip from "@mui/material/Tooltip";
 import SideNav from "../Drawer";
+import { Modal, Button } from "react-bootstrap";
+import RecordingComponent from "./RecordingComponent.js";
+import axios from "axios";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -40,7 +43,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
@@ -56,10 +58,51 @@ const Tests = () => {
   const [searchResult, setSearchResult] = useState([]);
   const [toggle, setToggle] = useState(true);
 
+  const [showModal, setShowModal] = useState(false);
+  const [url, setUrl] = useState("");
+  const iframeRef = useRef(null);
+
+  const [scripts, setScripts] = useState([]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/api/load-url", {
+        url,
+      });
+      console.log("URL submitted successfully:", response.data);
+      iframeRef.current.src = `http://127.0.0.1:5000/proxy?url=${encodeURIComponent(
+        url
+      )}`; // Load the URL through the proxy
+    } catch (error) {
+      console.error("Error submitting URL:", error);
+    }
+  };
+
+  useEffect(() => {
+    const handleIframeMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+      const { data } = event;
+      if (data.type === "recordedActions") {
+        console.log("Received recorded actions:", data.recordedActions);
+        // Handle the recorded actions here (e.g., save to state or send to backend)
+      }
+    };
+
+    window.addEventListener("message", handleIframeMessage);
+
+    return () => {
+      window.removeEventListener("message", handleIframeMessage);
+    };
+  }, []);
+
+  const handleShow = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
+
   const handleSearch = (e) => {
     const searchText = e.target.value.toLowerCase();
     setSearch(searchText);
-    const filteredResults = testc.filter((item) =>
+    const filteredResults = scripts.filter((item) =>
       item.toLowerCase().includes(searchText)
     );
     setSearchResult(filteredResults);
@@ -75,16 +118,65 @@ const Tests = () => {
     setToggle(false);
   };
 
+  const testList = async () => {
+    const response = await axios.get(
+      "http://127.0.0.1:8000/api/get-script-list/"
+    );
+    console.log(response);
+    setTestc(response.data.scripts);
+  };
+
+  const handlePlay = async (req) => {
+    try {
+      console.log(req);
+      const res = await axios.post("http://127.0.0.1:8000/api/run-script/", {
+        script_name: req,
+      });
+      console.log(res.data.stdout);
+      alert(res.data.stdout);
+    } catch (error) {
+      console.error("Error running script:", error);
+      alert("Failed to run the script. Please try again.");
+    }
+  };
+
+  const handleDelete = async (req) => {
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/api/delete-script/", {
+        name: req,
+      });
+      console.log(res);
+      if (res.statusText === "OK") {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchScripts = async () => {
+    try {
+      const response = await axios.get(
+        "http://127.0.0.1:8000/api/get-script-list/"
+      );
+      if (response.data.status === "success") {
+        setScripts(response.data.scripts);
+      }
+    } catch (error) {
+      console.error("Error fetching scripts:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchScripts();
+  }, []);
+
   return (
     <div className="d-flex">
       <SideNav />
-      {/* <div
-        className="d-flex justify-content-center col-lg-12"
-        style={{ paddingTop: 50 }}
-      > */}
       <div className="col-lg-10">
         <div className="d-flex justify-content-between col-lg-12 top-heading">
-          <h4>Tests</h4>
+          <h4 onClick={testList}>Tests</h4>
 
           <div className="d-flex flex-row-reverse">
             <IconButton>
@@ -124,8 +216,7 @@ const Tests = () => {
             ACTION
           </ListItemButton>
         </div>
-        {/* {testc.map((item, index) => ( */}
-        {(toggle ? testc : searchResult).map((item, index) => (
+        {(toggle ? scripts : searchResult).map((item, index) => (
           <div
             className="d-flex justify-content-around"
             style={{
@@ -133,22 +224,29 @@ const Tests = () => {
               marginBottom: 20,
               borderBottom: "1px solid rgb(120, 119, 119, .1)",
             }}
+            key={index}
           >
             <ListItemButton className="check">
-              <input type="checkbox" />
+              <input type="checkbox" id={item} />
             </ListItemButton>
-            <ListItemButton className="name" key="index">
-              {/* {tc[0]} */}
-              {item}
-            </ListItemButton>
+            <ListItemButton className="name">{item}</ListItemButton>
             <ListItemButton className="last-result">{""}</ListItemButton>
             <span className="action">
-              <IconButton>
+              <IconButton
+                id={item}
+                onClick={() => {
+                  handlePlay(`${item}.py`);
+                }}
+              >
                 <Tooltip title="Run test">
                   <PlayArrowIcon />
                 </Tooltip>
               </IconButton>
-              <IconButton>
+              <IconButton
+                onClick={() => {
+                  handleDelete(item);
+                }}
+              >
                 <Tooltip title="More option">
                   <MoreVertIcon />
                 </Tooltip>
@@ -156,8 +254,23 @@ const Tests = () => {
             </span>
           </div>
         ))}
+        <div>
+          {/* <Button variant="primary" onClick={handleShow}>
+            Add
+          </Button> */}
+
+          {/* <Modal show={showModal} onHide={handleClose} size="lg">
+            <Modal.Header closeButton>
+              <Modal.Title>Record Actions</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <RecordingComponent />
+            </Modal.Body>
+          </Modal> */}
+        </div>
       </div>
     </div>
   );
 };
+
 export default Tests;

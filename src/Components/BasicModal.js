@@ -4,6 +4,9 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import Backdrop from "@mui/material/Backdrop";
+import TextField from "@mui/material/TextField";
+import axios from "axios";
+import { X } from "@mui/icons-material";
 
 const style = {
   position: "absolute",
@@ -21,8 +24,38 @@ export default function BasicModal(props) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [name, setName] = React.useState("");
+  const [code, setCode] = React.useState("");
 
   var a = "";
+  var cod = "";
+
+  function convertPyToJson(pyScript) {
+    const lines = pyScript.split("\n");
+    const jsonData = {
+      content: lines,
+    };
+    const jsonString = JSON.stringify(jsonData, null, 2);
+    console.log(jsonString);
+    return jsonString;
+  }
+
+  function changeScript(code) {
+    // cod = convertPyToJson(cod);
+    setCode(convertPyToJson(code));
+  }
+
+  const handleSave = async () => {
+    console.log(cod);
+    changeScript(cod);
+    const response = await axios.post("http://127.0.0.1:8000/api/savecode/", {
+      name: name,
+      code: code,
+    });
+    if (response.statusText === "OK") {
+      window.location.reload();
+    }
+  };
 
   return (
     <div>
@@ -49,22 +82,39 @@ export default function BasicModal(props) {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             Name:
           </Typography>
-          <input
-            type="text"
-            onChange={(e) => {
-              a = e.target.value;
-            }}
-          />
+          <div className="d-flex flex-column" style={{ gap: "16px" }}>
+            <input
+              type="text"
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+            />
+
+            <TextField
+              id="outlined-multiline-static"
+              label="Code"
+              multiline
+              rows={4}
+              defaultValue="///"
+              fullWidth
+              onChange={(e) => {
+                // cod = e.target.value;
+                setCode(e.target.value);
+              }}
+            />
+          </div>
           <Button
             onClick={() => {
-              if (a !== "") {
-                console.log(a);
-                props.setState([...props.state, a]);
-                console.log(props.state.length);
-                handleClose();
-              } else {
-                alert("Please enter a name");
-              }
+              // if (a !== "") {
+              //   console.log(a);
+              //   props.setState([...props.state, a]);
+              //   console.log(props.state.length);
+
+              handleSave();
+              handleClose();
+              // } else {
+              // alert("Please enter a name");
+              // }
             }}
           >
             Save
