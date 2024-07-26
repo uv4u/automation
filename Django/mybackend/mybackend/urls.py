@@ -14,6 +14,10 @@ urlpatterns = [
     path('api/run-script/',run_script, name='run_script'),
     path('api/get-script-list/',get_script_list, name='script_list'),
     path('api/delete-script/', delete_script, name='delete_script'),
+    # path('api/start-login/', start_login, name='start_login'),
+    # path('api/complete-login/', complete_login, name='complete_login'),
+    # path('api/enter-mobile-number/', enter_mobile_number, name='enter_mobile_number'),
+    # path('api/enter-otp-and-verify/', enter_otp_and_verify, name='enter_otp_and_verify'),
 ]
 
 

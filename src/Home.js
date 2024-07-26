@@ -7,14 +7,6 @@ import "./styles.css";
 //SideTabs
 import Tests from "./sidetabs/Tests";
 
-//MUI
-
-import SideNav from "./Drawer";
-import { IconButton } from "@mui/material";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
-import { Route, Routes } from "react-router-dom";
-
 const Home = () => {
   const [mobileNumber, setMobileNumber] = useState("");
   const [otp, setOtp] = useState("");
