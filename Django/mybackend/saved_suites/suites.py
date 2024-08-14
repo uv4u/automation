@@ -1,0 +1,1 @@
+suites={'New': {'test_cases': ['Login2', 'Login1'], 'results': {'login2':'F'}}}

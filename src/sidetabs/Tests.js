@@ -2,15 +2,14 @@ import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import { IconButton, ListItemButton } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+// import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import "../styles.css";
 import { useState, useEffect, useRef } from "react";
 import BasicModal from "../Components/BasicModal";
 import Tooltip from "@mui/material/Tooltip";
 import SideNav from "../Drawer";
-import { Modal, Button } from "react-bootstrap";
-import RecordingComponent from "./RecordingComponent.js";
+import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
 const Search = styled("div")(({ theme }) => ({
@@ -64,38 +63,6 @@ const Tests = () => {
 
   const [scripts, setScripts] = useState([]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post("http://127.0.0.1:5000/api/load-url", {
-        url,
-      });
-      console.log("URL submitted successfully:", response.data);
-      iframeRef.current.src = `http://127.0.0.1:5000/proxy?url=${encodeURIComponent(
-        url
-      )}`; // Load the URL through the proxy
-    } catch (error) {
-      console.error("Error submitting URL:", error);
-    }
-  };
-
-  useEffect(() => {
-    const handleIframeMessage = (event) => {
-      if (event.origin !== window.location.origin) return;
-      const { data } = event;
-      if (data.type === "recordedActions") {
-        console.log("Received recorded actions:", data.recordedActions);
-        // Handle the recorded actions here (e.g., save to state or send to backend)
-      }
-    };
-
-    window.addEventListener("message", handleIframeMessage);
-
-    return () => {
-      window.removeEventListener("message", handleIframeMessage);
-    };
-  }, []);
-
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
@@ -132,8 +99,11 @@ const Tests = () => {
       const res = await axios.post("http://127.0.0.1:8000/api/run-script/", {
         script_name: req,
       });
+      // console.log(res);
       console.log(res.data.stdout);
-      alert(res.data.stdout);
+      if (res.data.returncode === 0) {
+        alert("Test Case Passed");
+      } else alert("Test Case Failed");
     } catch (error) {
       console.error("Error running script:", error);
       alert("Failed to run the script. Please try again.");
@@ -179,9 +149,6 @@ const Tests = () => {
           <h4 onClick={testList}>Tests</h4>
 
           <div className="d-flex flex-row-reverse">
-            <IconButton>
-              <MoreVertIcon />
-            </IconButton>
             <BasicModal setState={setTestc} state={testc} />
             <Search>
               <SearchIconWrapper>
@@ -203,9 +170,6 @@ const Tests = () => {
             borderBottom: "1px solid rgb(120, 119, 119, .1)",
           }}
         >
-          <ListItemButton className="check">
-            <input type="checkbox" />
-          </ListItemButton>
           <ListItemButton className="name" sx={{ color: "grey" }}>
             NAME
           </ListItemButton>
@@ -218,7 +182,7 @@ const Tests = () => {
         </div>
         {(toggle ? scripts : searchResult).map((item, index) => (
           <div
-            className="d-flex justify-content-around"
+            className="d-flex justify-content-around top-heading"
             style={{
               marginTop: 20,
               marginBottom: 20,
@@ -226,9 +190,6 @@ const Tests = () => {
             }}
             key={index}
           >
-            <ListItemButton className="check">
-              <input type="checkbox" id={item} />
-            </ListItemButton>
             <ListItemButton className="name">{item}</ListItemButton>
             <ListItemButton className="last-result">{""}</ListItemButton>
             <span className="action">
@@ -247,27 +208,13 @@ const Tests = () => {
                   handleDelete(item);
                 }}
               >
-                <Tooltip title="More option">
-                  <MoreVertIcon />
+                <Tooltip title="Delete">
+                  <DeleteIcon />
                 </Tooltip>
               </IconButton>
             </span>
           </div>
         ))}
-        <div>
-          {/* <Button variant="primary" onClick={handleShow}>
-            Add
-          </Button> */}
-
-          {/* <Modal show={showModal} onHide={handleClose} size="lg">
-            <Modal.Header closeButton>
-              <Modal.Title>Record Actions</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <RecordingComponent />
-            </Modal.Body>
-          </Modal> */}
-        </div>
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ const Navbar = () => {
         >
           <div className="container-fluid">
             <Link to="/" className="navbar-brand">
-              Navbar
+              Tester.ai
             </Link>
             <button
               className="navbar-toggler"
@@ -47,7 +47,7 @@ const Navbar = () => {
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    Project1
+                    Jiosnap
                   </a>
                   <ul
                     className="dropdown-menu"

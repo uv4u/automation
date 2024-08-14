@@ -38,7 +38,7 @@ const SideNav = () => {
       className={`${short} grid-item`}
       style={{ borderRight: `1px solid #EEEEEE`, paddingTop: 50 }}
     >
-      {toggle && <h3 style={{ marginLeft: 10 }}>Project1</h3>}
+      {toggle && <h3 style={{ marginLeft: 10 }}>Jiosnap</h3>}
       <List
         sx={{
           ".css-10hburv-MuiTypography-root": {
@@ -73,7 +73,7 @@ const SideNav = () => {
             {toggle && <ListItemText primary={"Run history"} />}
           </ListItemButton>
         </Link>
-        <Link className="link" to="/schedules">
+        {/* <Link className="link" to="/schedules">
           <ListItemButton>
             <Tooltip title="Schedules">
               <HistoryIcon />
@@ -88,7 +88,7 @@ const SideNav = () => {
             </Tooltip>
             {toggle && <ListItemText primary={"Alerts"} />}
           </ListItemButton>
-        </Link>
+        </Link> */}
       </List>
       <IconButton onClick={chnageShort}>
         {toggle ? (

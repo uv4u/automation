@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import "../styles.css";
 import { IconButton, ListItemButton } from "@mui/material";
 import SideNav from "../Drawer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Tooltip from "@mui/material/Tooltip";
@@ -13,6 +13,7 @@ import CustomizedDialogs from "./SuitesModel";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
+import axios from "axios";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -60,6 +61,9 @@ const Suites = () => {
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
 
+  const [suiteList, setSuiteList] = useState({});
+  const [result, setResult] = useState([]);
+
   const handleSearch = (e) => {
     const searchText = e.target.value.toLowerCase();
     setSearch(searchText);
@@ -79,6 +83,32 @@ const Suites = () => {
     setToggle(false);
   };
 
+  const fetchSuites = async () => {
+    const res = await axios.get("http://127.0.0.1:8000/api/get-suites/");
+    console.log(res.data.suites);
+    setSuiteList(res.data.suites);
+  };
+
+  useEffect(() => {
+    fetchSuites();
+  }, []);
+
+  const handleRun = async (item) => {
+    const res = await axios.post("http://127.0.0.1:8000/api/run-suite/", {
+      suite_name: item,
+      test_cases: suiteList[item],
+    });
+    setResult(res.data.res);
+    console.log(res);
+  };
+
+  const handleDelete = async (item) => {
+    const res = await axios.post("http://127.0.0.1:8000/api/delete-suite/", {
+      suite_name: item,
+    });
+    alert(res.data.message);
+  };
+
   return (
     <div>
       <div className="d-flex">
@@ -86,7 +116,7 @@ const Suites = () => {
         <div className="col-lg-10">
           <div className="d-flex justify-content-between col-lg-12 top-heading">
             <h4>Suites</h4>
-            <div className="d-flex align-items-center" style={{ gap: "16px" }}>
+            <div className="d-flex" style={{ gap: "16px" }}>
               <Search>
                 <SearchIconWrapper>
                   <SearchIcon />
@@ -105,61 +135,103 @@ const Suites = () => {
               </IconButton>
             </div>
           </div>
-          <div className="d-flex justify-content-between col-lg-12">
-            <div
-              className="d-flex col-lg-12 top-heading"
-              style={{
-                borderBottom: "1px solid rgb(120, 119, 119, .1)",
-              }}
-            >
-              <ListItemButton className="check">
-                <input type="checkbox" />
-              </ListItemButton>
-              <ListItemButton className="name" sx={{ color: "grey" }}>
-                NAME
-              </ListItemButton>
-              <ListItemButton className="name" sx={{ color: "grey" }}>
-                TEST RESULT
-              </ListItemButton>
-              <ListItemButton className="last-result" sx={{ color: "grey" }}>
-                LAST RESULT
-              </ListItemButton>
-              <ListItemButton sx={{ color: "grey" }} className="action">
-                ACTION
-              </ListItemButton>
-            </div>
-            {(toggle ? testc : searchResult).map((item, index) => (
+          <div
+            className="d-flex col-lg-12 top-heading"
+            style={{
+              borderBottom: "1px solid rgb(120, 119, 119, .1)",
+            }}
+          >
+            <ListItemButton className="check">
+              <input type="checkbox" />
+            </ListItemButton>
+            <ListItemButton className="name" sx={{ color: "grey" }}>
+              NAME
+            </ListItemButton>
+            <ListItemButton className="last-result" sx={{ color: "grey" }}>
+              TEST RESULT
+            </ListItemButton>
+            {/* <ListItemButton className="last-result" sx={{ color: "grey" }}>
+              LAST RESULT
+            </ListItemButton> */}
+            <ListItemButton sx={{ color: "grey" }} className="action">
+              ACTION
+            </ListItemButton>
+          </div>
+          {Object.entries(suiteList).map(
+            ([suiteName, { test_cases, results }]) => (
               <div
-                className="d-flex justify-content-around"
+                className="d-flex justify-content-around top-heading col-lg-12"
                 style={{
                   marginTop: 20,
                   marginBottom: 20,
                   borderBottom: "1px solid rgb(120, 119, 119, .1)",
                 }}
+                key={suiteName}
               >
                 <ListItemButton className="check">
                   <input type="checkbox" />
                 </ListItemButton>
-                <ListItemButton className="name" key="index">
-                  {/* {tc[0]} */}
-                  {item}
+                <ListItemButton className="name" key="item">
+                  {suiteName}
+                  <div
+                    className="d-flex justify-content-center"
+                    style={{ fontSize: "0.7rem", padding: 4 }}
+                  ></div>
                 </ListItemButton>
-                <ListItemButton className="last-result">{""}</ListItemButton>
+                <ListItemButton className="last-result">
+                  {result}
+                  <div class="btn-group" style={{ marginRight: "50px" }}>
+                    <button
+                      class="btn btn-secondary btn-sm dropdown-toggle"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                      style={{ cursor: "unset" }}
+                    >
+                      See Results
+                    </button>
+                    <ul class="dropdown-menu">
+                      {test_cases.map((testCase) => (
+                        <li key={testCase}>
+                          {console.log(` res: ${results["testCase"]} `)}
+                          <p
+                            style={{
+                              fontWeight: 400,
+                              fontFamily: "monospace",
+                              fontSize: 13,
+                            }}
+                          >
+                            Test Case: {testCase} - Result:{" "}
+                            {results[testCase] || "Not Executed"}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </ListItemButton>
                 <span className="action">
-                  <IconButton>
+                  <IconButton
+                    onClick={() => {
+                      handleRun(suiteName);
+                    }}
+                  >
                     <Tooltip title="Run test">
                       <PlayArrowIcon />
                     </Tooltip>
                   </IconButton>
-                  <IconButton>
+                  <IconButton
+                    onClick={() => {
+                      handleDelete(suiteName);
+                    }}
+                  >
                     <Tooltip title="More option">
                       <MoreVertIcon />
                     </Tooltip>
                   </IconButton>
                 </span>
               </div>
-            ))}
-          </div>
+            )
+          )}
         </div>
       </div>
     </div>

@@ -1,0 +1,133 @@
+Django API Documentation
+Overview
+This Django application provides a RESTful API for managing, running, and retrieving Python scripts and test suites. It allows users to save, run, delete scripts and suites, and also track the execution history.
+
+Dependencies
+Django
+Django REST framework
+Python's subprocess, ast, os, json, datetime modules
+File Structure
+saved_codes: Directory where scripts and suites are saved.
+script_list.py: Stores the list of saved scripts.
+suites.py: Stores the list of saved test suites.
+history.py: Stores the execution history of scripts and suites.
+API Endpoints
+1. save_code
+URL: /save_code/
+Method: POST
+Description: Saves a Python script provided by the frontend to the server. The script's name is stored in the script_list.py file.
+
+Request Data:
+
+name (string): The name of the script.
+code (string): The Python code to be saved.
+Response:
+
+200 OK: Script saved successfully, returns the updated list of scripts.
+400 Bad Request: If name or code is not provided.
+500 Internal Server Error: If there's an error saving the script.
+2. run_script
+URL: /run_script/
+Method: POST
+Description: Executes a saved script using pytest and captures the result. The result is saved in the history.py file.
+
+Request Data:
+
+script_name (string): The name of the script to run.
+Response:
+
+200 OK: Script executed successfully, returns the stdout, stderr, and return code.
+400 Bad Request: If script_name is not provided.
+404 Not Found: If the script does not exist.
+500 Internal Server Error: If there's an error during script execution.
+3. get_script_list
+URL: /get_script_list/
+Method: GET
+Description: Retrieves the list of saved scripts from the script_list.py file.
+
+Response:
+
+200 OK: Returns the list of saved scripts.
+500 Internal Server Error: If there's an error retrieving the script list.
+4. delete_script
+URL: /delete_script/
+Method: POST
+Description: Deletes a saved script from the server and updates the script_list.py file.
+
+Request Data:
+
+name (string): The name of the script to delete.
+Response:
+
+200 OK: Script deleted successfully, returns the updated list of scripts.
+400 Bad Request: If name is not provided.
+404 Not Found: If the script does not exist.
+500 Internal Server Error: If there's an error during deletion.
+5. save_suite
+URL: /save_suite/
+Method: POST
+Description: Saves a test suite consisting of multiple test cases. The suite is stored in the suites.py file.
+
+Request Data:
+
+suite_name (string): The name of the suite.
+test_cases (list of strings): The test cases to be included in the suite.
+Response:
+
+201 Created: Suite saved successfully.
+400 Bad Request: If suite_name or test_cases are invalid.
+500 Internal Server Error: If there's an error saving the suite.
+6. get_suite_list
+URL: /get_suite_list/
+Method: GET
+Description: Retrieves the list of saved test suites from the suites.py file.
+
+Response:
+
+200 OK: Returns the list of saved test suites.
+500 Internal Server Error: If there's an error retrieving the suite list.
+7. run_suite
+URL: /run_suite/
+Method: POST
+Description: Executes all test cases within a saved suite using pytest and captures the results. The results are saved in the suites.py and history.py files.
+
+Request Data:
+
+suite_name (string): The name of the suite to run.
+test_cases (list of strings): The test cases to run.
+Response:
+
+201 Created: Suite executed successfully, returns the results of each test case.
+400 Bad Request: If suite_name or test_cases are invalid.
+500 Internal Server Error: If there's an error during suite execution.
+8. delete_suite
+URL: /delete_suite/
+Method: POST
+Description: Deletes a saved test suite from the server and updates the suites.py file.
+
+Request Data:
+
+suite_name (string): The name of the suite to delete.
+Response:
+
+200 OK: Suite deleted successfully.
+400 Bad Request: If suite_name is not provided.
+500 Internal Server Error: If there's an error during deletion.
+9. get_history
+URL: /get_history/
+Method: GET
+Description: Retrieves the history of executed scripts and suites from the history.py file.
+
+Response:
+
+200 OK: Returns the execution history.
+500 Internal Server Error: If there's an error retrieving the history.
+10. clear_history
+URL: /clear_history/
+Method: GET
+Description: Clears the execution history stored in the history.py file.
+
+Response:
+
+200 OK: History cleared successfully.
+500 Internal Server Error: If there's an error clearing the history.

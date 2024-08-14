@@ -7,11 +7,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-//Dropdown
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-
-//TransferList
 import Grid from "@mui/material/Grid";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -19,8 +16,9 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
+import axios from "axios";
 
-const options = ["Option 1", "NO"];
+const options = ["Option 1", "Option 2"];
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -31,7 +29,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-//TransferList
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
 }
@@ -42,18 +39,26 @@ function intersection(a, b) {
 
 export default function CustomizedDialogs() {
   const [open, setOpen] = React.useState(false);
-  //Dropdown
   const [value, setValue] = React.useState(options[0]);
   const [inputValue, setInputValue] = React.useState("");
   const [inputValue2, setInputValue2] = React.useState("");
-
-  //TransferList
   const [checked, setChecked] = React.useState([]);
-  const [left, setLeft] = React.useState([0, 1, 2, 3]);
-  const [right, setRight] = React.useState([4, 5, 6, 7]);
+  const [left, setLeft] = React.useState([]);
+  const [testc, setTestc] = React.useState([]);
+
+  const [suiteName, setSuiteName] = React.useState("");
+  const [right, setRight] = React.useState([]);
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
+
+  const testList = async () => {
+    const response = await axios.get(
+      "http://127.0.0.1:8000/api/get-script-list/"
+    );
+    setTestc(response.data.scripts);
+    setLeft(response.data.scripts); // Initialize the left list with the fetched data
+  };
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -69,11 +74,11 @@ export default function CustomizedDialogs() {
   };
 
   const handleAllRight = () => {
-    setRight(right.concat(left));
+    setRight(testc);
     setLeft([]);
   };
 
-  const handleCheckedRight = () => {
+  const handleCheckedRight = (e) => {
     setRight(right.concat(leftChecked));
     setLeft(not(left, leftChecked));
     setChecked(not(checked, leftChecked));
@@ -87,31 +92,44 @@ export default function CustomizedDialogs() {
 
   const handleAllLeft = () => {
     setLeft(left.concat(right));
+    console.log(left);
     setRight([]);
   };
 
   const handleClickOpen = () => {
     setOpen(true);
+    testList();
   };
+
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleCreate = async () => {
+    const res = await axios.post("http://127.0.0.1:8000/api/save-suite/", {
+      suite_name: suiteName,
+      test_cases: right,
+      results: "",
+    });
+    console.log(res);
+    window.location.reload();
   };
 
   const customList = (items) => (
     <Paper sx={{ width: 250, height: 300, overflow: "auto" }}>
       <List dense component="div" role="list">
-        {items.map((value) => {
-          const labelId = `transfer-list-item-${value}-label`;
+        {items.map((item, index) => {
+          const labelId = `transfer-list-item-${item}-label`;
 
           return (
             <ListItemButton
-              key={value}
+              key={index}
               role="listitem"
-              onClick={handleToggle(value)}
+              onClick={handleToggle(item)}
             >
               <ListItemIcon>
                 <Checkbox
-                  checked={checked.indexOf(value) !== -1}
+                  checked={checked.indexOf(item) !== -1}
                   tabIndex={-1}
                   disableRipple
                   inputProps={{
@@ -119,7 +137,7 @@ export default function CustomizedDialogs() {
                   }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={`List item ${value + 1}`} />
+              <ListItemText id={labelId} primary={`${item}`} />
             </ListItemButton>
           );
         })}
@@ -136,7 +154,7 @@ export default function CustomizedDialogs() {
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
-        maxWidth
+        maxWidth="lg"
         fullWidth
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
@@ -160,51 +178,12 @@ export default function CustomizedDialogs() {
               <label>
                 <h6>Suite name</h6>
               </label>
-              <input type="text" />
-              <label>
-                <h6>Auto add</h6>
-                <p>lorem</p>
-              </label>
-              <div>
-                <Autocomplete
-                  value={value}
-                  onChange={(event, newValue) => {
-                    setValue(newValue);
-                  }}
-                  inputValue={inputValue}
-                  onInputChange={(event, newInputValue) => {
-                    setInputValue(newInputValue);
-                  }}
-                  id="controllable-states-demo"
-                  options={options}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Controllable" />
-                  )}
-                />
-              </div>
-              <label>
-                <h6>Auto Retry Failed Test</h6>
-                <p>lorem</p>
-              </label>
-              <div>
-                <Autocomplete
-                  value={value}
-                  onChange={(event, newValue) => {
-                    setValue(newValue);
-                  }}
-                  inputValue2={inputValue2}
-                  onInputChange={(event, newInputValue) => {
-                    setInputValue2(newInputValue);
-                  }}
-                  id="controllable-states-demo"
-                  options={options}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Controllable" />
-                  )}
-                />
-              </div>
+              <input
+                type="text"
+                onChange={(e) => {
+                  setSuiteName(e.target.value);
+                }}
+              />
             </div>
             <div id="two">
               <Grid
@@ -220,7 +199,10 @@ export default function CustomizedDialogs() {
                       sx={{ my: 0.5 }}
                       variant="outlined"
                       size="small"
-                      onClick={handleAllRight}
+                      onClick={() => {
+                        handleAllRight();
+                        console.log(right);
+                      }}
                       disabled={left.length === 0}
                       aria-label="move all right"
                     >
@@ -264,7 +246,14 @@ export default function CustomizedDialogs() {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose}>
+          <Button
+            autoFocus
+            onClick={() => {
+              handleClose();
+              console.log(right);
+              handleCreate();
+            }}
+          >
             Create Suite
           </Button>
           <Button autoFocus onClick={handleClose}>
