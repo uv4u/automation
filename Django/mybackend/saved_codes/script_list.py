@@ -1,1 +1,1 @@
-scripts = ['Login1', 'Login2']
+scripts = []
