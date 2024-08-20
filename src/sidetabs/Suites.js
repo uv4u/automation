@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Tooltip from "@mui/material/Tooltip";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import CustomizedDialogs from "./SuitesModel";
 
@@ -157,6 +158,14 @@ const Suites = () => {
               ACTION
             </ListItemButton>
           </div>
+          {Object.keys(suiteList).length === 0 && (
+            <div
+              className="d-flex justify-content-center"
+              style={{ fontWeight: 500, paddingTop: 14 }}
+            >
+              <p>No suites found</p>
+            </div>
+          )}
           {Object.entries(suiteList).map(
             ([suiteName, { test_cases, results }]) => (
               <div
@@ -222,10 +231,11 @@ const Suites = () => {
                   <IconButton
                     onClick={() => {
                       handleDelete(suiteName);
+                      window.location.reload();
                     }}
                   >
                     <Tooltip title="More option">
-                      <MoreVertIcon />
+                      <DeleteIcon />
                     </Tooltip>
                   </IconButton>
                 </span>

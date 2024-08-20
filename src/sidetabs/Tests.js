@@ -180,6 +180,14 @@ const Tests = () => {
             ACTION
           </ListItemButton>
         </div>
+        {scripts.length === 0 && (
+          <div
+            className="d-flex justify-content-center"
+            style={{ fontWeight: 500, paddingTop: 14 }}
+          >
+            <p>No tests found</p>
+          </div>
+        )}
         {(toggle ? scripts : searchResult).map((item, index) => (
           <div
             className="d-flex justify-content-around top-heading"

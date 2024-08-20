@@ -50,6 +50,14 @@ const RunHistory = () => {
             RESULT
           </ListItemButton>
         </div>
+        {Object.keys(history).length === 0 && (
+          <div
+            className="d-flex justify-content-center"
+            style={{ fontWeight: 500, paddingTop: 14 }}
+          >
+            <p>No history found</p>
+          </div>
+        )}
         {Object.entries(history).map(
           ([history, { ename, results, run_type, timestamp }]) => (
             <div
