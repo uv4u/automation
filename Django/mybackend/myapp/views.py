@@ -114,7 +114,7 @@ def run_script(request):
             if not os.path.exists(script_path):
                 return JsonResponse({'status': 'error', 'message': 'Script not found'}, status=404)
 
-            result = subprocess.run(['pytest', script_path, "-s"], capture_output=True, text=True)
+            result = subprocess.run(['cmd.exe', '/c','pytest', script_path, "-s"], capture_output=True, text=True)
 
             run_results = {
                 'stdout': result.stdout,
