@@ -3,6 +3,7 @@ import { IconButton } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AppBar from "@mui/material/AppBar";
 import { Link } from "react-router-dom";
+import BugReportIcon from "@mui/icons-material/BugReport";
 
 const Navbar = () => {
   return (
@@ -11,15 +12,19 @@ const Navbar = () => {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
+          background: "linear-gradient(to right, #061161, #780206)",
+          color: "white",
+          height: 44,
         }}
-        color="transparent"
+        // color="transparent"
       >
         <nav
           className="navbar navbar-expand navbar-light"
-          style={{ borderBottom: "1px solid #EEEEEE", height: 40 }}
+          style={{ borderBottom: "1px solid #EEEEEE", height: 45 }}
         >
           <div className="container-fluid">
             <Link to="/" className="navbar-brand">
+              <BugReportIcon />
               Tester.ai
             </Link>
             <button
@@ -77,7 +82,7 @@ const Navbar = () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <HelpIcon fontSize="medium" />
+                <HelpIcon fontSize="medium" sx={{ color: "white" }} />
               </IconButton>
               <ul
                 className="dropdown-menu"
@@ -90,7 +95,7 @@ const Navbar = () => {
                 </li>
               </ul>
               <IconButton>
-                <AccountCircleIcon fontSize="medium" />
+                <AccountCircleIcon fontSize="medium" sx={{ color: "white" }} />
               </IconButton>
             </div>
           </div>

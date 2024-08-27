@@ -7,8 +7,11 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Skeleton from "@mui/material/Skeleton";
+import { Typography } from "@mui/material";
 
 import CustomizedDialogs from "./SuitesModel";
+import AlertDialog from "../Components/DeleteWarning";
 
 //search
 import SearchIcon from "@mui/icons-material/Search";
@@ -107,6 +110,8 @@ const Suites = () => {
     const res = await axios.post("http://127.0.0.1:8000/api/delete-suite/", {
       suite_name: item,
     });
+    window.location.reload();
+
     alert(res.data.message);
   };
 
@@ -116,7 +121,13 @@ const Suites = () => {
         <SideNav />
         <div className="col-lg-10">
           <div className="d-flex justify-content-between col-lg-12 top-heading">
-            <h4>Suites</h4>
+            <Typography
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: "700", marginLeft: 1 }}
+            >
+              Suites
+            </Typography>
             <div className="d-flex" style={{ gap: "16px" }}>
               <Search>
                 <SearchIconWrapper>
@@ -159,11 +170,11 @@ const Suites = () => {
             </ListItemButton>
           </div>
           {Object.keys(suiteList).length === 0 && (
-            <div
-              className="d-flex justify-content-center"
-              style={{ fontWeight: 500, paddingTop: 14 }}
-            >
-              <p>No suites found</p>
+            <div style={{ paddingLeft: 50, paddingTop: 15, paddingRight: 100 }}>
+              {/* <p>No tests found</p> */}
+              <Skeleton variant="text" sx={{ width: 250 }} />
+              <Skeleton variant="text" sx={{ width: 350 }} />
+              <Skeleton variant="text" sx={{ width: 450 }} />
             </div>
           )}
           {Object.entries(suiteList).map(
@@ -228,7 +239,7 @@ const Suites = () => {
                       <PlayArrowIcon />
                     </Tooltip>
                   </IconButton>
-                  <IconButton
+                  {/* <IconButton
                     onClick={() => {
                       handleDelete(suiteName);
                       window.location.reload();
@@ -237,7 +248,12 @@ const Suites = () => {
                     <Tooltip title="More option">
                       <DeleteIcon />
                     </Tooltip>
-                  </IconButton>
+                  </IconButton> */}
+                  <AlertDialog
+                    handler={() => {
+                      handleDelete(suiteName);
+                    }}
+                  />
                 </span>
               </div>
             )

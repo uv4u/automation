@@ -10,7 +10,8 @@ from myapp.views import (   save_code, run_script,
                             save_suite,
                             get_suite_list,run_suite,
                             delete_suite,
-                            get_history,clear_history)
+                            get_history,clear_history,
+                            get_file_content, save_file_content)
 
 
 urlpatterns = [
@@ -24,5 +25,7 @@ urlpatterns = [
     path('api/delete-suite/', delete_suite, name='delete_suite'),
     path('api/get-history/', get_history, name='get_history'),
     path('api/clear-history/', clear_history, name='clear_history'),
+    path('api/get-file-content/', get_file_content, name='get_file_content'),
+    path('api/save-file-content/', save_file_content, name='save_file_content'),
 ]
 

@@ -1,1 +1,1 @@
-scripts = ['Print']
+scripts = []

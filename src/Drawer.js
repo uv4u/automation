@@ -14,6 +14,7 @@ import "./styles.css";
 import { IconButton } from "@mui/material";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import { Typography } from "@mui/material";
 
 import Alerts from "./sidetabs/Alerts";
 
@@ -36,9 +37,22 @@ const SideNav = () => {
   return (
     <div
       className={`${short} grid-item`}
-      style={{ borderRight: `1px solid #EEEEEE`, paddingTop: 50 }}
+      style={{
+        borderRight: `1px solid #EEEEEE`,
+        paddingTop: 50,
+      }}
     >
-      {toggle && <h3 style={{ marginLeft: 10 }}>Jiosnap</h3>}
+      {toggle && (
+        <div className="project-name">
+          <Typography
+            variant="h6"
+            component="h2"
+            sx={{ fontWeight: "700", marginLeft: 1 }}
+          >
+            JioPhotos
+          </Typography>
+        </div>
+      )}
       <List
         sx={{
           ".css-10hburv-MuiTypography-root": {
@@ -73,22 +87,6 @@ const SideNav = () => {
             {toggle && <ListItemText primary={"Run history"} />}
           </ListItemButton>
         </Link>
-        {/* <Link className="link" to="/schedules">
-          <ListItemButton>
-            <Tooltip title="Schedules">
-              <HistoryIcon />
-            </Tooltip>
-            {toggle && <ListItemText primary={"Schedules"} />}
-          </ListItemButton>
-        </Link>
-        <Link className="link" to="/alerts">
-          <ListItemButton>
-            <Tooltip title="Alerts">
-              <AddAlertIcon />
-            </Tooltip>
-            {toggle && <ListItemText primary={"Alerts"} />}
-          </ListItemButton>
-        </Link> */}
       </List>
       <IconButton onClick={chnageShort}>
         {toggle ? (

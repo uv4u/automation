@@ -1,16 +1,20 @@
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
-import { IconButton, ListItemButton } from "@mui/material";
+import { IconButton, ListItemButton, Typography } from "@mui/material";
 // import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import "../styles.css";
 import { useState, useEffect, useRef } from "react";
-import BasicModal from "../Components/BasicModal";
 import Tooltip from "@mui/material/Tooltip";
 import SideNav from "../Drawer";
-import DeleteIcon from "@mui/icons-material/Delete";
+// import DeleteIcon from "@mui/icons-material/Delete";
+import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
+import BasicModal from "../Components/BasicModal";
+import AlertDialog from "../Components/DeleteWarning";
+import SimpleSnackbar from "../Components/Snackbar";
+import TextEditor from "../Components/Editor";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -52,19 +56,32 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Tests = () => {
-  const [testc, setTestc] = useState([]);
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [toggle, setToggle] = useState(true);
 
   const [showModal, setShowModal] = useState(false);
-  const [url, setUrl] = useState("");
-  const iframeRef = useRef(null);
+
+  // const [snackSeverity, setSnackSeverity] = useState("");
+  // const [snackText, setSnackText] = useState("");
+  // const [showSnack, setShowSnack] = useState(false);
 
   const [scripts, setScripts] = useState([]);
+  const [isSnackBarOpen, setIsSnackbarOpen] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const handleShow = () => setShowModal(true);
-  const handleClose = () => setShowModal(false);
+  // const handleShow = () => setShowModal(true);
+  // const handleClose = () => setShowModal(false);
+  const [selectedFile, setSelectedFile] = useState(null); // State for the currently selected file
+
+  const handleFileSelect = (fileName) => {
+    setSelectedFile(fileName);
+    console.log(`selectedFile is ${fileName}`);
+  };
+
+  const handleCloseEditor = () => {
+    setSelectedFile(null);
+  };
 
   const handleSearch = (e) => {
     const searchText = e.target.value.toLowerCase();
@@ -85,60 +102,63 @@ const Tests = () => {
     setToggle(false);
   };
 
-  const testList = async () => {
-    const response = await axios.get(
-      "http://127.0.0.1:8000/api/get-script-list/"
-    );
-    console.log(response);
-    setTestc(response.data.scripts);
-  };
-
   const handlePlay = async (req) => {
     try {
       console.log(req);
       const res = await axios.post("http://127.0.0.1:8000/api/run-script/", {
         script_name: req,
       });
+      setMessage(`${req} running...`);
       // console.log(res);
+      setIsSnackbarOpen(true);
       console.log(res.data.stdout);
       if (res.data.returncode === 0) {
-        alert("Test Case Passed");
-      } else alert("Test Case Failed");
+        setMessage(`${req} passed sucessfully!`);
+      } else {
+        setMessage(`${req} failed`);
+      }
     } catch (error) {
       console.error("Error running script:", error);
-      alert("Failed to run the script. Please try again.");
     }
   };
 
   const handleDelete = async (req) => {
+    console.log(req);
+    const updatedItems = scripts.filter((item) => item !== req);
+    console.log(updatedItems);
+    setScripts(updatedItems);
+
     try {
       const res = await axios.post("http://127.0.0.1:8000/api/delete-script/", {
         name: req,
       });
       console.log(res);
       if (res.statusText === "OK") {
-        window.location.reload();
+        setMessage("Testcase deleted!!");
       }
     } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchScripts = async () => {
-    try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/get-script-list/"
-      );
-      if (response.data.status === "success") {
-        setScripts(response.data.scripts);
-      }
-    } catch (error) {
-      console.error("Error fetching scripts:", error);
+      console.log(error);
     }
   };
 
   useEffect(() => {
+    const fetchScripts = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/get-script-list/"
+        );
+        if (response.data.status === "success") {
+          setScripts(response.data.scripts);
+        }
+      } catch (error) {
+        console.error("Error fetching scripts:", error);
+      }
+    };
+
     fetchScripts();
+    // setTimeout(()=> {
+
+    // },1000);
   }, []);
 
   return (
@@ -146,10 +166,22 @@ const Tests = () => {
       <SideNav />
       <div className="col-lg-10">
         <div className="d-flex justify-content-between col-lg-12 top-heading">
-          <h4 onClick={testList}>Tests</h4>
+          <div className="component-title">
+            <Typography
+              variant="h6"
+              component="h2"
+              sx={{ fontWeight: "700", marginLeft: 1 }}
+            >
+              Tests
+            </Typography>
+          </div>
 
           <div className="d-flex flex-row-reverse">
-            <BasicModal setState={setTestc} state={testc} />
+            <BasicModal
+              setState={setScripts}
+              state={scripts}
+              data={scripts.length}
+            />
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -173,19 +205,19 @@ const Tests = () => {
           <ListItemButton className="name" sx={{ color: "grey" }}>
             NAME
           </ListItemButton>
-          <ListItemButton className="last-result" sx={{ color: "grey" }}>
+          {/* <ListItemButton className="last-result" sx={{ color: "grey" }}>
             LAST RESULT
-          </ListItemButton>
+          </ListItemButton> */}
           <ListItemButton sx={{ color: "grey" }} className="action">
             ACTION
           </ListItemButton>
         </div>
         {scripts.length === 0 && (
-          <div
-            className="d-flex justify-content-center"
-            style={{ fontWeight: 500, paddingTop: 14 }}
-          >
-            <p>No tests found</p>
+          <div style={{ paddingLeft: 50, paddingTop: 15, paddingRight: 100 }}>
+            {/* <p>No tests found</p> */}
+            <Skeleton variant="text" sx={{ width: 250 }} />
+            <Skeleton variant="text" sx={{ width: 350 }} />
+            <Skeleton variant="text" sx={{ width: 450 }} />
           </div>
         )}
         {(toggle ? scripts : searchResult).map((item, index) => (
@@ -196,11 +228,21 @@ const Tests = () => {
               marginBottom: 20,
               borderBottom: "1px solid rgb(120, 119, 119, .1)",
             }}
-            key={index}
+            key={item}
           >
-            <ListItemButton className="name">{item}</ListItemButton>
-            <ListItemButton className="last-result">{""}</ListItemButton>
-            <span className="action">
+            <ListItemButton
+              className="name"
+              onClick={() => {
+                handleFileSelect(`${item}.py`);
+              }}
+            >
+              {item}
+            </ListItemButton>
+            {selectedFile === `${item}.py` && (
+              <TextEditor fileName={selectedFile} onClose={handleCloseEditor} />
+            )}
+            {/* <ListItemButton className="last-result">{""}</ListItemButton> */}
+            <ListItemButton className="action">
               <IconButton
                 id={item}
                 onClick={() => {
@@ -211,19 +253,23 @@ const Tests = () => {
                   <PlayArrowIcon />
                 </Tooltip>
               </IconButton>
-              <IconButton
-                onClick={() => {
-                  handleDelete(item);
+
+              <AlertDialog
+                handler={() => {
+                  handleDelete(`${item}`);
                 }}
-              >
-                <Tooltip title="Delete">
-                  <DeleteIcon />
-                </Tooltip>
-              </IconButton>
-            </span>
+                setOpen={setIsSnackbarOpen}
+              />
+            </ListItemButton>
           </div>
         ))}
       </div>
+      <SimpleSnackbar
+        open={isSnackBarOpen}
+        setOpen={setIsSnackbarOpen}
+        message={message}
+        key={message}
+      />
     </div>
   );
 };

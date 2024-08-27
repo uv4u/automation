@@ -4,7 +4,7 @@ import json
 # Create your views here.
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import os
 import ast
@@ -375,5 +375,41 @@ def clear_history(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error', 'message': 'Invalid method'}, status=405)
+
+@api_view(['POST'])
+def get_file_content(req):
+    try:
+        filename = req.data.get('filename')
+        print(filename)
+        file_path = os.path.join(settings.BASE_DIR, 'saved_codes', filename)
+        with open(file_path, 'r') as f:
+            content = f.read()
+        return JsonResponse({'content': content})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+@api_view(['POST'])    
+def save_file_content(request):
+    if request.method == 'POST':
+        print(request)
+        filename=request.data.get('filename')
+        content = request.data.get('content')
+        if filename is None:
+            return JsonResponse({'error': 'fileName required'}, status=400)
+        if content is None:
+            return JsonResponse({'error': 'content required'}, status=400)
+        
+        # Ensure fileName is a string
+        if not isinstance(filename, str) or not isinstance(content, str):
+            return JsonResponse({'error': 'Invalid fileName or content format'}, status=400)
+        
+        try:
+            file_path = os.path.join(settings.BASE_DIR, 'saved_codes', filename)
+            with open(file_path, 'w') as f:
+                f.write(content)
+            return HttpResponse('File saved successfully')
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return HttpResponse(status=405)
     
 

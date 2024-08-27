@@ -1,8 +1,10 @@
 import SideNav from "../Drawer";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { IconButton, ListItemButton } from "@mui/material";
+import { IconButton, ListItemButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Skeleton from "@mui/material/Skeleton";
+
 import "../styles.css";
 const RunHistory = () => {
   const [history, setHistory] = useState({});
@@ -26,7 +28,13 @@ const RunHistory = () => {
       <SideNav />
       <div className="col-lg-10">
         <div className="d-flex justify-content-between col-lg-12 top-heading">
-          <h4>Run History</h4>
+          <Typography
+            variant="h6"
+            component="h2"
+            sx={{ fontWeight: "700", marginLeft: 1 }}
+          >
+            Run History
+          </Typography>
         </div>
         <div
           className="d-flex col-lg-12 top-heading"
@@ -51,11 +59,10 @@ const RunHistory = () => {
           </ListItemButton>
         </div>
         {Object.keys(history).length === 0 && (
-          <div
-            className="d-flex justify-content-center"
-            style={{ fontWeight: 500, paddingTop: 14 }}
-          >
-            <p>No history found</p>
+          <div style={{ paddingLeft: 50, paddingTop: 15, paddingRight: 100 }}>
+            <Skeleton variant="text" sx={{ width: 250 }} />
+            <Skeleton variant="text" sx={{ width: 350 }} />
+            <Skeleton variant="text" sx={{ width: 450 }} />
           </div>
         )}
         {Object.entries(history).map(
